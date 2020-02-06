@@ -208,6 +208,11 @@ nf.train(
     callbacks=callbacks,
     optimizer=args.optimizer,
     lr_policy=lr_policy,
-    optimization_params={"num_epochs": 300, "max_steps": args.max_steps, "lr": args.lr, "weight_decay": args.weight_decay},
+    optimization_params={
+        "num_epochs": 300,
+        "max_steps": args.max_steps,
+        "lr": args.lr,
+        "weight_decay": args.weight_decay,
+    },
     batches_per_step=args.iter_per_step,
 )
