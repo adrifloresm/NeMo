@@ -26,6 +26,13 @@ pipeline {
     }
 
 
+    stage('Unittests general') {
+      steps {
+        sh './reinstall.sh && python -m unittest tests/*.py'
+      }
+    }
+
+
     stage('Parallel NLP TEEEEEEST') {
       failFast true
       parallel { 
@@ -36,13 +43,6 @@ pipeline {
             sh 'rm -rf examples/nlp/asr_postprocessor/outputs'
           }
         }
-      }
-    }
-
-
-    stage('Unittests general') {
-      steps {
-        sh './reinstall.sh && python -m unittest tests/*.py'
       }
     }
     stage('Unittests ASR') {
