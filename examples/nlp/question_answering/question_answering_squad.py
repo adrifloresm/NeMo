@@ -264,7 +264,7 @@ if __name__ == "__main__":
         log_dir=args.work_dir,
         create_tb_writer=True,
         files_to_copy=[__file__],
-        add_time_to_log_dir=True,
+        add_time_to_log_dir=False,
     )
 
     if args.tokenizer == "sentencepiece":
