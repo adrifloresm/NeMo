@@ -36,6 +36,12 @@ pipeline {
             sh 'DATA_DIR=/home/mrjenkins/TestData/nlp/squad_mini/v1.1/  rm -rf examples/nlp/question_answering/outputs/squadv1 && rm -rf $DATA_DIR/*cache*'
           }
         }
+      }
+    }
+
+    stage('Squad') {
+      failFast true
+      parallel {       
         stage('Squad v2.0') {
           steps {
             sh 'cd examples/nlp/question_answering && DATA_DIR=/home/mrjenkins/TestData/nlp/squad_mini/v2.0/ CUDA_VISIBLE_DEVICES=1 python question_answering_squad.py --amp_opt_level O1 --train_file $DATA_DIR/train-v2.0.json --dev_file $DATA_DIR/dev-v2.0.json --work_dir outputs/squadv2 --batch_size 8 --save_step_freq 300 --num_epochs 3 --lr_policy WarmupAnnealing  --lr 3e-5 --do_lower_case --version_2_with_negative'
