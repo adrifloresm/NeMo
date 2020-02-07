@@ -36,7 +36,7 @@ pipeline {
         stage('Squad v1.1') {
           steps {
             sh 'cd examples/nlp/question_answering && CUDA_VISIBLE_DEVICES=0 python question_answering_squad.py --amp_opt_level O1 --train_file /home/mrjenkins/TestData/nlp/squad_mini/v1.1/train-v1.1.json --dev_file /home/mrjenkins/TestData/nlp/squad_mini/v1.1/dev-v1.1.json --work_dir outputs/squadv1 --batch_size 8 --save_step_freq 300 --num_epochs 3 --lr_policy WarmupAnnealing  --lr 3e-5 --do_lower_case'
-            sh 'cd examples/nlp/question_answering && FSCORE=$(cat outputs/squadv1/log_globalrank-0_localrank-0.txt |  grep "f1" |tail -n 1 |egrep -o "[0-9.]+"|tail -n 1 ) && echo $FSCORE && if [ $(echo "$FSCORE > 50.0" | bc -l) -eq 1 ]; then echo "SUCCESS" && exit 0; else echo "FAILURE" && exit 1; fi'
+            sh 'cd examples/nlp/question_answering && FSCORE=$(cat outputs/squadv1/log_globalrank-0_localrank-0.txt |  grep "f1" |tail -n 1 |egrep -o "[0-9.]+"|tail -n 1 ) && echo $FSCORE && if [ $(echo "$FSCORE > 80.0" | bc -l) -eq 1 ]; then echo "SUCCESS" && exit 0; else echo "FAILURE" && exit 1; fi'
             sh 'rm -rf examples/nlp/question_answering/outputs/squadv1 && rm -rf /home/mrjenkins/TestData/nlp/squad_mini/v1.1/*cache*'
           }
         }
@@ -55,7 +55,7 @@ pipeline {
       parallel { 
         stage('BERT on the fly preprocessing') {
           steps {
-            sh '&& cd examples/nlp/language_modeling && CUDA_VISIBLE_DEVICES=0 python bert_pretraining.py --amp_opt_level O1 --data_dir /home/mrjenkins/TestData/nlp/wikitext-2 --dataset_name wikitext-2 --work_dir outputs/bert_lm/wikitext2 --batch_size 64 --lr 0.01 --lr_policy CosineAnnealing --lr_warmup_proportion 0.05 --tokenizer sentence-piece --vocab_size 3200 --hidden_size 768 --intermediate_size 3072 --num_hidden_layers 6 --num_attention_heads 12 --hidden_act "gelu" --save_step_freq 200 --sample_size 10000000 --mask_probability 0.15 --short_seq_prob 0.1 --max_steps=300'
+            sh 'cd examples/nlp/language_modeling && CUDA_VISIBLE_DEVICES=0 python bert_pretraining.py --amp_opt_level O1 --data_dir /home/mrjenkins/TestData/nlp/wikitext-2 --dataset_name wikitext-2 --work_dir outputs/bert_lm/wikitext2 --batch_size 64 --lr 0.01 --lr_policy CosineAnnealing --lr_warmup_proportion 0.05 --tokenizer sentence-piece --vocab_size 3200 --hidden_size 768 --intermediate_size 3072 --num_hidden_layers 6 --num_attention_heads 12 --hidden_act "gelu" --save_step_freq 200 --sample_size 10000000 --mask_probability 0.15 --short_seq_prob 0.1 --max_steps=300'
             sh 'cd examples/nlp/language_modeling && LOSS=$(cat outputs/bert_lm/wikitext2/log_globalrank-0_localrank-0.txt |   grep "Loss" |tail -n 1| awk \'{print \$7}\' | egrep -o "[0-9.]+" ) && echo $LOSS && if [ $(echo "$LOSS < 8.0" | bc -l) -eq 1 ]; then echo "SUCCESS" && exit 0; else echo "FAILURE" && exit 1; fi'
             sh 'rm -rf examples/nlp/language_modeling/outputs/wikitext2'
           }
