@@ -318,7 +318,6 @@ if args.max_steps < 0:
     optimization_params['num_epochs'] = args.num_epochs
 else:
     optimization_params['max_steps'] = args.max_steps
-
 nf.train(
     tensors_to_optimize=[train_loss],
     lr_policy=lr_policy_fn,
