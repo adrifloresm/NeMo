@@ -26,7 +26,7 @@ pipeline {
     }
 
 
-    stage('Squad') {
+    stage('Squad1') {
       failFast true
       parallel {       
         stage('Squad v1.1') {
@@ -39,7 +39,7 @@ pipeline {
       }
     }
 
-    stage('Squad') {
+    stage('Squad2') {
       failFast true
       parallel {       
         stage('Squad v2.0') {
