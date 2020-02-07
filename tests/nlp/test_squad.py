@@ -30,7 +30,6 @@ logging = nemo.logging
 
 
 class TestSquad(NeMoUnitTest):
-
     def test_setup_squad(self):
         pretrained_bert_model = 'bert-base-uncased'
         tokenizer = nemo_nlp.data.NemoBertTokenizer(pretrained_bert_model)
