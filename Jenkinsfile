@@ -25,18 +25,39 @@ pipeline {
       }
     }
 
-    stage('BERT pretraining') {
+
+    stage('Squad') {
       failFast true
       parallel {       
-        stage('BERT offline preprocessing') {
+        stage('Squad v1.1') {
           steps {
-            sh './reinstall.sh && cd examples/nlp/language_modeling && CUDA_VISIBLE_DEVICES=0 python bert_pretraining.py --amp_opt_level "O1" --data_dir /home/mrjenkins/TestData/nlp/wiki_book_mini  --work_dir outputs/bert_lm --batch_size 8 --config_file /home/mrjenkins/TestData/nlp/bert_configs/uncased_L-12_H-768_A-12.json  --save_step_freq 200 --max_steps 300  --num_gpus 1  --batches_per_step 1 --lr_policy SquareRootAnnealing --beta2 0.999 --beta1 0.9  --lr_warmup_proportion 0.01 --optimizer adam_w  --weight_decay 0.01  --lr 0.875e-4 --preprocessed_data '
-            sh 'cd examples/nlp/language_modeling && LOSS=$(cat outputs/bert_lm/log_globalrank-0_localrank-0.txt |  grep "Loss" |tail -n 1| awk "{print $7}" | egrep -o "[0-9.]+" ) && echo $LOSS && if [ $(echo "$LOSS > 11.0" | bc -l) -eq 1 ]; then echo "FAILURE" && exit 1; else echo "SUCCESS"; fi'
-            sh 'rm -rf examples/nlp/language_modeling/outputs'
+            sh './reinstall.sh && cd examples/nlp/question_answering && DATA_DIR=/home/mrjenkins/TestData/nlp/squad_mini/v1.1/ CUDA_VISIBLE_DEVICES=0 python question_answering_squad.py --amp_opt_level O1 --train_file ${DATA_DIR}/train-v1.1.json --dev_file ${DATA_DIR}/dev-v1.1.json --work_dir outputs/squadfv1 --batch_size 8 --save_step_freq 300 --num_epochs 3 --lr_policy WarmupAnnealing  --lr 3e-5 --do_lower_case'
+            sh 'cd examples/nlp/question_answering && FSCORE=$(cat outputs/squadv1/log_globalrank-0_localrank-0.txt |  grep "f1" |tail -n 1 |egrep -o "[0-9.]+"|tail -n 1 ) && echo $FSCORE && if [ $(echo "$FSCORE < 50.0" | bc -l) -eq 1 ]; then echo "FAILURE" && exit 1; else echo "SUCCESS"; fi'
+            sh 'DATA_DIR=/home/mrjenkins/TestData/nlp/squad_mini/v1.1/  rm -rf examples/nlp/question_answering/outputs/squadv1 && rm -rf ${DATA_DIR}/*cache*'
+          }
+        }
+        stage('Squad v2.0') {
+          steps {
+            sh 'cd examples/nlp/question_answering && DATA_DIR=/home/mrjenkins/TestData/nlp/squad_mini/v2.0/ CUDA_VISIBLE_DEVICES=1 python question_answering_squad.py --amp_opt_level O1 --train_file ${DATA_DIR}/train-v2.0.json --dev_file ${DATA_DIR}/dev-v2.0.json --work_dir outputs/squadv2 --batch_size 8 --save_step_freq 300 --num_epochs 3 --lr_policy WarmupAnnealing  --lr 3e-5 --do_lower_case --version_2_with_negative'
+            sh 'cd examples/nlp/question_answering && FSCORE=$(cat outputs/squadv2/log_globalrank-0_localrank-0.txt |  grep "f1" |tail -n 1 |egrep -o "[0-9.]+"|tail -n 1 ) && echo $FSCORE && if [ $(echo "$FSCORE < 50.0" | bc -l) -eq 1 ]; then echo "FAILURE" && exit 1; else echo "SUCCESS"; fi'
+            sh 'DATA_DIR=/home/mrjenkins/TestData/nlp/squad_mini/v2.0/  rm -rf examples/nlp/question_answering/outputs/squadv2 && rm -rf ${DATA_DIR}/*cache*'
           }
         }
       }
     }
+
+    // stage('BERT pretraining') {
+    //   failFast true
+    //   parallel {       
+    //     stage('BERT offline preprocessing') {
+    //       steps {
+    //         sh './reinstall.sh && cd examples/nlp/language_modeling && CUDA_VISIBLE_DEVICES=0 python bert_pretraining.py --amp_opt_level "O1" --data_dir /home/mrjenkins/TestData/nlp/wiki_book_mini  --work_dir outputs/bert_lm --batch_size 8 --config_file /home/mrjenkins/TestData/nlp/bert_configs/uncased_L-12_H-768_A-12.json  --save_step_freq 200 --max_steps 300  --num_gpus 1  --batches_per_step 1 --lr_policy SquareRootAnnealing --beta2 0.999 --beta1 0.9  --lr_warmup_proportion 0.01 --optimizer adam_w  --weight_decay 0.01  --lr 0.875e-4 --preprocessed_data '
+    //         sh 'cd examples/nlp/language_modeling && LOSS=$(cat outputs/bert_lm/log_globalrank-0_localrank-0.txt |  grep "Loss" |tail -n 1| awk "{print $7}" | egrep -o "[0-9.]+" ) && echo $LOSS && if [ $(echo "$LOSS > 11.0" | bc -l) -eq 1 ]; then echo "FAILURE" && exit 1; else echo "SUCCESS"; fi'
+    //         sh 'rm -rf examples/nlp/language_modeling/outputs'
+    //       }
+    //     }
+    //   }
+    // }
 
     //     stage('BERT pretraining') {
     //   failFast true

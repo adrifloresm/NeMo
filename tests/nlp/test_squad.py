@@ -73,6 +73,8 @@ class TestSquad(NeMoUnitTest):
         pretrained_bert_model = 'bert-base-uncased'
         batch_size = 3
         data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/nlp/squad/v1.1'))
+        train_file = os.path.join(data_dir, 'train-v1.1.json')
+        dev_file = os.path.join(data_dir, 'dev-v1.1.json')
         max_query_length = 64
         max_seq_length = 384
         doc_stride = 128
@@ -101,7 +103,7 @@ class TestSquad(NeMoUnitTest):
             version_2_with_negative=version_2_with_negative,
             batch_size=batch_size,
             tokenizer=tokenizer,
-            data_dir=data_dir,
+            data_file=train_file,
             max_query_length=max_query_length,
             max_seq_length=max_seq_length,
             doc_stride=doc_stride,
@@ -119,7 +121,7 @@ class TestSquad(NeMoUnitTest):
             version_2_with_negative=version_2_with_negative,
             batch_size=batch_size,
             tokenizer=tokenizer,
-            data_dir=data_dir,
+            data_file=dev_file,
             max_query_length=max_query_length,
             max_seq_length=max_seq_length,
             doc_stride=doc_stride,
@@ -182,6 +184,8 @@ class TestSquad(NeMoUnitTest):
         pretrained_bert_model = 'bert-base-uncased'
         batch_size = 3
         data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/nlp/squad/v2.0'))
+        train_file = os.path.join(data_dir, 'train-v2.0.json')
+        dev_file = os.path.join(data_dir, 'dev-v2.0.json')
         max_query_length = 64
         max_seq_length = 384
         doc_stride = 128
@@ -212,7 +216,7 @@ class TestSquad(NeMoUnitTest):
             version_2_with_negative=version_2_with_negative,
             batch_size=batch_size,
             tokenizer=tokenizer,
-            data_dir=data_dir,
+            data_file=train_file,
             max_query_length=max_query_length,
             max_seq_length=max_seq_length,
             doc_stride=doc_stride,
@@ -230,7 +234,7 @@ class TestSquad(NeMoUnitTest):
             version_2_with_negative=version_2_with_negative,
             batch_size=batch_size,
             tokenizer=tokenizer,
-            data_dir=data_dir,
+            data_file=dev_file,
             max_query_length=max_query_length,
             max_seq_length=max_seq_length,
             doc_stride=doc_stride,
