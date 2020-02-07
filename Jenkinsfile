@@ -30,9 +30,9 @@ pipeline {
       parallel {       
         stage('BERT offline preprocessing') {
           steps {
-            sh "./reinstall.sh && cd examples/nlp/language_modeling && CUDA_VISIBLE_DEVICES=0 python bert_pretraining.py --amp_opt_level O1 --data_dir /home/mrjenkins/TestData/nlp/wiki_book_mini  --work_dir outputs/bert_lm --batch_size 8 --config_file /home/mrjenkins/TestData/nlp/bert_configs/uncased_L-12_H-768_A-12.json  --save_step_freq 200 --max_steps 300  --num_gpus 1  --batches_per_step 1 --lr_policy SquareRootAnnealing --beta2 0.999 --beta1 0.9  --lr_warmup_proportion 0.01 --optimizer adam_w  --weight_decay 0.01  --lr 0.875e-4 --preprocessed_data "
-            sh "cd examples/nlp/language_modeling && LOSS=$(cat outputs/bert_lm/log_globalrank-0_localrank-0.txt |  grep 'Loss' |tail -n 1| awk '{print $7}' | egrep -o '[0-9.]+' ) && echo $LOSS && if [ $(echo '$LOSS > 12.0' | bc -l) -eq 1 ]; then echo 'FAILURE' && exit 1; else echo 'SUCCESS'; fi"
-            sh "rm -rf examples/nlp/language_modeling/outputs"
+            sh './reinstall.sh && cd examples/nlp/language_modeling && CUDA_VISIBLE_DEVICES=0 python bert_pretraining.py --amp_opt_level "O1" --data_dir /home/mrjenkins/TestData/nlp/wiki_book_mini  --work_dir outputs/bert_lm --batch_size 8 --config_file /home/mrjenkins/TestData/nlp/bert_configs/uncased_L-12_H-768_A-12.json  --save_step_freq 200 --max_steps 300  --num_gpus 1  --batches_per_step 1 --lr_policy SquareRootAnnealing --beta2 0.999 --beta1 0.9  --lr_warmup_proportion 0.01 --optimizer adam_w  --weight_decay 0.01  --lr 0.875e-4 --preprocessed_data '
+            sh 'cd examples/nlp/language_modeling && LOSS=$(cat outputs/bert_lm/log_globalrank-0_localrank-0.txt |  grep "Loss" |tail -n 1| awk "{print $7}" | egrep -o "[0-9.]+" ) && echo $LOSS && if [ $(echo "$LOSS > 11.0" | bc -l) -eq 1 ]; then echo "FAILURE" && exit 1; else echo "SUCCESS"; fi'
+            sh 'rm -rf examples/nlp/language_modeling/outputs'
           }
         }
       }
