@@ -24,7 +24,11 @@ pipeline {
         sh 'python setup.py style'
       }
     }
-
+    stage('Unittests general') {
+      steps {
+        sh './reinstall.sh && python -m unittest tests/*.py'
+      }
+    }
 
     stage('Squad') {
       failFast false
@@ -47,11 +51,7 @@ pipeline {
     }
 
 
-    stage('Unittests general') {
-      steps {
-        sh './reinstall.sh && python -m unittest tests/*.py'
-      }
-    }
+
 
     stage('BERT pretraining') {
       failFast false
