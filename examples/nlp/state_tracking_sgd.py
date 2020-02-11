@@ -269,6 +269,8 @@ eval_logit_noncat_slot_end = model(encoded_utterance=eval_encoded_utterance,
 train_tensors = [loss]
 
 eval_tensors = [eval_data.user_utterance,
+                eval_data.start_char_idx,
+                eval_data.end_char_idx,
                 eval_logit_intent_status,
                 eval_logit_req_slot_status,
                 eval_logit_cat_slot_status,
@@ -316,7 +318,7 @@ lr_policy_fn = get_lr_policy(args.lr_policy,
 
 nf.train(tensors_to_optimize=[loss],
          callbacks=[train_callback, 
-         eval_callback
+         # eval_callback
          ],
          lr_policy=lr_policy_fn,
          optimizer=args.optimizer_kind,

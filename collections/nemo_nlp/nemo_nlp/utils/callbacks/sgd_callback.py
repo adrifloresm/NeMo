@@ -234,7 +234,7 @@ def eval_iter_callback(tensors,
     # check that num noncategorical slots is the same across the batch
     if not (num_noncategorical_slots.shape[0] * num_noncategorical_slots[0] == sum(num_noncategorical_slots)):
         raise ValueError(f'num_noncategorical_slots is not the same across the batch. The fuzzy would not be computed correctly.')
-
+    import pdb; pdb.set_trace()
     noncat_slot_correctness = get_noncat_slot_value_match(user_utterances,
                                                           inds_with_correct_active_noncat_slot_status,
                                                           noncat_slot_value_start_labels,
@@ -273,7 +273,8 @@ def get_noncat_slot_value_match(user_utterances,
     """
     noncat_slot_correctness = []
     # user_utterance_ind = indices / 
-    for i, ind in enumerate(indices):
+    for ind in indices:
+        import pdb; pdb.set_trace()
         user_utterance = user_utterances[indices / num_noncategorical_slots]
         str_label = user_utterance[noncat_slot_value_start_labels[ind] : noncat_slot_value_end_labels[ind]]
         str_preds = user_utterance[noncat_slot_value_start_preds[ind] : noncat_slot_value_end_preds[ind]]

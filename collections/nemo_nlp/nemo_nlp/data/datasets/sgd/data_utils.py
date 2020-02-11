@@ -206,6 +206,7 @@ class Dstc8DataProcessor(object):
             # 1 is added for the [CLS] token and for user tokens a bias of 2 +
             # len(system_tokens) is added to account for [CLS], system tokens and
             # [SEP].
+
             user_span_boundaries = self._find_subword_indices(
                 state_update, user_utterance, user_frame["slots"], user_alignments,
                 user_tokens, 2 + len(system_tokens))
@@ -224,6 +225,7 @@ class Dstc8DataProcessor(object):
 
     def _find_subword_indices(self, slot_values, utterance, char_slot_spans,
                               alignments, subwords, bias):
+
         """Find indices for subwords corresponding to slot values."""
         span_boundaries = {}
         for slot, values in slot_values.items():
@@ -241,6 +243,7 @@ class Dstc8DataProcessor(object):
                 if v in value_char_spans:
                     span_boundaries[slot] = value_char_spans[v]
                     break
+
         return span_boundaries
 
     def _tokenize(self, utterance):
@@ -350,7 +353,7 @@ class InputExample(object):
         if self.is_real_example and self._tokenizer is None:
             raise ValueError("Must specify tokenizer when input is a real example.")
 
-        self.user_utterance = 'dfsdf'
+        self.user_utterance = None
         # The id of each subword in the vocabulary for BERT.
         self.utterance_ids = [0] * self._max_seq_length
         # Denotes the identity of the sequence. Takes values 0 (system utterance)
@@ -512,15 +515,20 @@ class InputExample(object):
         utt_mask.append(1)
         start_char_idx.append(0)
         end_char_idx.append(0)
-
+        
         for subword_idx, subword in enumerate(user_tokens):
             utt_subword.append(subword)
             utt_seg.append(1)
             utt_mask.append(1)
             st, en = user_inv_alignments[subword_idx]
             start_char_idx.append(st + 1)
+            # start_char_idx.append(st)
             end_char_idx.append(en + 1)
 
+        # for i in range(len(start_char_idx)):
+        #     if start_char_idx[i] > 0:
+        #         print (user_utterance[start_char_idx[i]:end_char_idx[i]])
+  
         utt_subword.append("[SEP]")
         utt_seg.append(1)
         utt_mask.append(1)
@@ -541,7 +549,7 @@ class InputExample(object):
         self.utterance_mask = utt_mask
         self.start_char_idx = start_char_idx
         self.end_char_idx = end_char_idx
-
+       
         self.user_utterance = user_utterance
 
     def make_copy_with_utterance_features(self):
