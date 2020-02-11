@@ -30,6 +30,11 @@ pipeline {
         sh './reinstall.sh'
       }
     }
+    stage('check git') {
+      steps {
+        sh 'git log'
+      }
+    }
 
      stage('Parallel NLP-BERT pretraining') {
       failFast true
