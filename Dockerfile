@@ -53,9 +53,10 @@ RUN --mount=from=nemo-src,target=/tmp/nemo cd /tmp/nemo && pip install ".[all]"
 
 # copy scripts/examples/tests into container for end user
 WORKDIR /workspace/nemo
-COPY scripts /workspace/nemo/scripts
-COPY examples /workspace/nemo/examples
-COPY tests /workspace/nemo/tests
+#COPY scripts /workspace/nemo/scripts
+#COPY examples /workspace/nemo/examples
+#COPY tests /workspace/nemo/tests
+COPY . /workspace/nemo/
 # COPY README.rst LICENSE /workspace/nemo/
 
 RUN printf "#!/bin/bash\njupyter lab --no-browser --allow-root --ip=0.0.0.0" >> start-jupyter.sh && \
